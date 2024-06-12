@@ -17,6 +17,7 @@ function MyAppBar() {
         </Typography>
         <Button color="inherit" component={Link} to="/">出席・委任取り消し</Button>
         <Button color="inherit" component={Link} to="/about">委任に変更</Button>
+        <Button color="inherit" component={Link} to="/list">リスト</Button>
       
       </Toolbar>
     </AppBar>
