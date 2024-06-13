@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, TextField, Button, Paper, Tabs, Tab } from "@mui/material";
+import { Box, Typography, Tabs, Tab, TableContainer, Paper, Table } from "@mui/material";
 import { getDocs, collection } from "firebase/firestore/lite";
-import { db } from "./firebase"; // dbの初期化が正しく行われていることを確認してください
+import { db } from "./firebase"; // Make sure to properly initialize 'db'
+
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
 export default function List(){
     const [members, setMembers] = useState([]);
@@ -28,6 +33,7 @@ export default function List(){
 
     return(
         <>
+            {console.log(members)}
             <Box sx={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -40,34 +46,37 @@ export default function List(){
                 </Typography>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' , margin:"20px"}}>
                     <Tabs
-                    value={value}
-                    onChange={handleTabChange}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    centered
+                        value={value}
+                        onChange={handleTabChange}
+                        indicatorColor="primary"
+                        textColor="primary"
+                        centered
                     >
                         <Tab label="学友会員" />
                         <Tab label="出席者" />
                         <Tab label="議長委任" />
                         <Tab label="個人委任" />
                     </Tabs>
-                    </Box>
+                </Box>
 
-                    {/* <TabPanel value={value} index = {0}></TabPanel>
-                */}
-                {/* {members.length > 0 ? (
-                    members.map((member, index) => (
-                //         <Box key={index} sx={{ margin: '10px' }}>
-                //             <Typography variant="body1">
-                //                 {JSON.stringify(member)}
-                //             </Typography>
-                //         </Box>
-                //     ))
-                // ) : (
-                //     <Typography variant="body1">
-                //         No members found.
-                //     </Typography> */}
-                // )}
+                <TableContainer component={Paper}>
+                    <Table sx={{width:650}} aria-label="学友会員">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>学籍番号</TableCell>
+                                <TableCell>名前</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {members.map((member, index) => (
+                                <TableRow key={index}>
+                                    <TableCell>{member.stu_id}</TableCell>
+                                    <TableCell>{member.firstname} {member.lastname}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             </Box>
         </>
     );
