@@ -2,6 +2,10 @@ import React from "react";
 import { Box, Typography, TextField, Button } from "@mui/material";
 import { useState } from "react";
 
+import { getDocs, collection } from "firebase/firestore/lite";
+
+import {db} from "./firebase";
+
 const Home = () => {
     const [stuNum, setStuNum] = useState("");
 
@@ -12,6 +16,7 @@ const Home = () => {
         } else {
             window.alert("学籍番号は7桁の半角数字で入力してください。");
         }
+
     }
 
     const handleInputChange = (e) => {
