@@ -7,7 +7,11 @@ const Home = () => {
 
     const handleClick = (e) => {
         e.preventDefault();
-        window.alert(stuNum);
+        if (stuNum.length === 7) {
+            window.alert(`学籍番号: ${stuNum}`);
+        } else {
+            window.alert("学籍番号は7桁の半角数字で入力してください。");
+        }
     }
 
     const handleInputChange = (e) => {
@@ -49,7 +53,13 @@ const Home = () => {
                     alignItems: 'center',
                     mt: "50px",
                 }}>
-                    <Button variant="contained" onClick={handleClick}>送信</Button>
+                    <Button 
+                        variant="contained" 
+                        onClick={handleClick}
+                        disabled={stuNum.length !== 7}
+                    >
+                        送信
+                    </Button>
                 </Box>
             </Box>
         </>
