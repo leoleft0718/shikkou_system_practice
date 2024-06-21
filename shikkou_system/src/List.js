@@ -33,7 +33,6 @@ export default function List(){
 
     return(
         <>
-            {console.log(members)}
             <Box sx={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -68,6 +67,7 @@ export default function List(){
                             </TableRow>
                         </TableHead>
                         <TableBody>
+                            {console.log(members)}
                             {members.map((member, index) => (
                                 <TableRow key={index}>
                                     <TableCell>{member.stu_id}</TableCell>
