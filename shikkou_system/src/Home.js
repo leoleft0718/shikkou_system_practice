@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, TextField, Button } from "@mui/material";
-import { getDocs, collection, doc, setDoc, query, where, deleteDoc, updateDoc } from "firebase/firestore/lite";
+import { getDocs, collection, doc, setDoc, query, where, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebase";
 
 const Home = () => {
@@ -32,9 +32,9 @@ const Home = () => {
     const handleClick = async (e) => {
         e.preventDefault();
         if (stuNum.length === 7) {
-            fetchData();
-            window.alert(`学籍番号: ${stuNum}`);
-            const shussekisha =  getstuData(stuNum);
+            await fetchData();
+            console.log(gakuyukaiinnData);
+            const shussekisha = getstuData(stuNum);
 
             if (gakuyukaiinnData.some((data) => data.stu_id === Number(stuNum))) {
                 if (gityoininData.some((data) => data.stu_id === Number(stuNum))) {
@@ -43,14 +43,13 @@ const Home = () => {
                         window.alert("委任を取り消しました。再度学籍番号を入力してください。");
                     }
                 } else if (kojinininData.some((data) => data.stu_id === Number(stuNum))) {
-                    if(window.confirm(`学籍番号: ${stuNum} の個人委任を取り消しますか？`)){
-                        var result = await deletekojinininData(stuNum);
+                    if (window.confirm(`学籍番号: ${stuNum} の個人委任を取り消しますか？`)) {
+                        const result = await deletekojinininData(stuNum);
                         window.alert(result ? "個人委任を取り消しました。再度学籍番号を入力してください" : "個人委任データの取り消しに失敗しました。");
                     }
-
                 } else {
                     if (window.confirm(`学籍番号: ${stuNum} ${shussekisha[0].firstname} ${shussekisha[0].lastname}の出席データを更新しますか？`)) {
-                        const hyousuu = await updateShussekiData(stuNum);
+                        await updateShussekiData(stuNum);
                         window.alert(`${shussekisha[0].firstname} ${shussekisha[0].lastname} さんの出席データを更新しました。\n 票数は${shussekisha[0].hyousuu}票です。`);
                     }
                 }
@@ -60,6 +59,7 @@ const Home = () => {
         } else {
             window.alert("学籍番号は7桁の半角数字で入力してください。");
         }
+        fetchData();
     };
 
     const getstuData = (stuNum) => {
@@ -77,7 +77,6 @@ const Home = () => {
             }
         }
 
-        // shussekisha コレクションから stuNum に一致するドキュメントを取得
         const shussekiQuery = query(collection(db, "shussekisha"), where("stu_id", "==", Number(inin_stu_id)));
         const shussekiSnapshot = await getDocs(shussekiQuery);
 

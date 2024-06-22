@@ -1,37 +1,72 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Tabs, Tab, TableContainer, Paper, Table } from "@mui/material";
-import { getDocs, collection } from "firebase/firestore/lite";
-import { db } from "./firebase"; // Make sure to properly initialize 'db'
+import { getDocs, collection } from "firebase/firestore";
+import { db } from "./firebase"; // 正しく初期化された 'db' をインポート
 
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-export default function List(){
+export default function List() {
     const [members, setMembers] = useState([]);
     const [value, setValue] = useState(0);
 
-    async function fetchMembers(db) {
-        const memCol = collection(db, "Gakuyukaiinn");
+    const collections = ["Gakuyukaiinn", "shussekisha", "gityoinin", "kojininin"];
+    const defaultOrder = ['stu_id', 'firstname', 'lastname'];
+
+    async function fetchMembers(collectionName) {
+        const memCol = collection(db, collectionName);
         const memSnapshot = await getDocs(memCol);
         const memList = memSnapshot.docs.map(doc => doc.data());
         return memList;
     }
 
-    function handleTabChange(e, newValue){
+    function handleTabChange(e, newValue) {
         setValue(newValue);
     }
 
     useEffect(() => {
         async function loadMembers() {
-            const membersData = await fetchMembers(db);
+            const membersData = await fetchMembers(collections[value]);
             setMembers(membersData);
         }
         loadMembers();
-    }, []);
+    }, [value]);
 
-    return(
+    const renderTableHeaders = () => {
+        if (members.length > 0) {
+            const keys = defaultOrder.concat(Object.keys(members[0]).filter(key => !defaultOrder.includes(key)));
+            return keys.map((key, index) => (
+                <TableCell key={index}>{key}</TableCell>
+            ));
+        }
+        return null;
+    };
+
+    const formatCellValue = (value) => {
+        if (value !== null && typeof value === 'object' && value.seconds && value.nanoseconds) {
+            return new Date(value.seconds * 1000).toLocaleString();
+        }
+        return value;
+    };
+
+    const renderTableRows = () => {
+        return members.map((member, rowIndex) => {
+            const orderedValues = defaultOrder.concat(Object.keys(member).filter(key => !defaultOrder.includes(key)))
+                .map(key => member[key]);
+
+            return (
+                <TableRow key={rowIndex}>
+                    {orderedValues.map((value, cellIndex) => (
+                        <TableCell key={cellIndex}>{formatCellValue(value)}</TableCell>
+                    ))}
+                </TableRow>
+            );
+        });
+    };
+
+    return (
         <>
             <Box sx={{
                 display: 'flex',
@@ -43,7 +78,7 @@ export default function List(){
                 <Typography variant="h4" gutterBottom>
                     Gakuyukaiinn Members
                 </Typography>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' , margin:"20px"}}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider', margin: "20px" }}>
                     <Tabs
                         value={value}
                         onChange={handleTabChange}
@@ -59,21 +94,14 @@ export default function List(){
                 </Box>
 
                 <TableContainer component={Paper}>
-                    <Table sx={{width:650}} aria-label="学友会員">
+                    <Table sx={{ width: 650 }} aria-label="学友会員">
                         <TableHead>
                             <TableRow>
-                                <TableCell>学籍番号</TableCell>
-                                <TableCell>名前</TableCell>
+                                {renderTableHeaders()}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {console.log(members)}
-                            {members.map((member, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>{member.stu_id}</TableCell>
-                                    <TableCell>{member.firstname} {member.lastname}</TableCell>
-                                </TableRow>
-                            ))}
+                            {renderTableRows()}
                         </TableBody>
                     </Table>
                 </TableContainer>
