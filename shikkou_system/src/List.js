@@ -75,9 +75,6 @@ export default function List() {
                 flexDirection: 'column',
                 marginTop: '20px'
             }}>
-                <Typography variant="h4" gutterBottom>
-                    Gakuyukaiinn Members
-                </Typography>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider', margin: "20px" }}>
                     <Tabs
                         value={value}
