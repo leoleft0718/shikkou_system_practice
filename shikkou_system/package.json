@@ -2,7 +2,7 @@
   "name": "shikkou_system",
   "version": "0.1.0",
   "private": true,
-"homepage": "https://shikkou-system-practice-fv71.vercel.app",
+"homepage": "https://shikkou-system-practice-fv71.vercel.app/",
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
